@@ -14,5 +14,4 @@ python app.py
 
 ## Check it out
 
-CartoDB Map
-[url](https://skotekal.cartodb.com/viz/9e6e0ad6-d44c-11e5-8ae0-0ecfd53eb7d3/map)
+[CartoDB Map](https://skotekal.cartodb.com/viz/9e6e0ad6-d44c-11e5-8ae0-0ecfd53eb7d3/map)
