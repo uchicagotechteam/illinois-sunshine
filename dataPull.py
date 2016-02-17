@@ -86,7 +86,7 @@ def main():
 		#	csvwriter.writerow(header)
 		#	count += 1
 		#csvwriter.writerow(c.values())
-	with open('./tmp/com-data.json', 'w') as outfile:	
+	with open('./tmp/com_data.json', 'w') as outfile:	
 		json.dump(coms, outfile)
 
 def agg_receipts(cid, yr):

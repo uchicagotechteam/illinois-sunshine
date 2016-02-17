@@ -2,6 +2,7 @@
 	<head> 
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
 		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+		<script src = "../tmp/com_data.json"></script>
 		<div id="map"></div>
 		<style>
 			#map { height: 770px; }
@@ -14,6 +15,14 @@
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 });
 	layer.addTo(map);
+			
+			var c_data = JSON.parse(com_data);
+			for(i = 0; i < c_data.length; i++)
+			{
+				console.log(c_data[i].lat + " " + c_data[i].lon)
+				L.marker([c_data[i].lat, c_data[i].lon]).addTo(map);
+			}
+	
 		</script>
 	</body>
 	
