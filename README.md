@@ -1,6 +1,20 @@
-# Flask-D3 Illinois Sunshine
+#Illinois Sunshine
 
-## Run it
+## Check it out
+
+[CartoDB Map](https://skotekal.cartodb.com/viz/9e6e0ad6-d44c-11e5-8ae0-0ecfd53eb7d3/map)
+
+## Run
+
+```
+git clone https://github.com/SKotekal/illinois-sunshine.git
+python dataPull.py
+```
+
+You should get a CSV file in /tmp/ called CommiteeData.csv
+You can put this into CartoDB and play around with it.
+
+## Alternative Visualization using D3-Flask
 Make sure you have [pip installed](https://pip.pypa.io/en/stable/installing/).
 
 Run the following commands:
@@ -12,6 +26,3 @@ python app.py
 
  If everything worked properly, you should see a map of Illinois separated by county.
 
-## Check it out
-
-[CartoDB Map](https://skotekal.cartodb.com/viz/9e6e0ad6-d44c-11e5-8ae0-0ecfd53eb7d3/map)
