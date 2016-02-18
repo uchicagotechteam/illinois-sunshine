@@ -1,4 +1,6 @@
 #Illinois Sunshine
+Maps campaign finance data from [Illinois Sunshine](https://www.illinoissunshine.org/). We are looking to implement
+more features such as filters, time sliders, etc.
 
 ## Check it out
 
