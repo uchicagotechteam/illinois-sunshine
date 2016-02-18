@@ -2,7 +2,7 @@
 
 ## Check it out
 
-[CartoDB Map](https://skotekal.cartodb.com/viz/9e6e0ad6-d44c-11e5-8ae0-0ecfd53eb7d3/map)
+[CartoDB Map](https://skotekal.cartodb.com/viz/1c4aa0a4-d524-11e5-b8d9-0ea31932ec1d/map)
 
 ## Run
 
