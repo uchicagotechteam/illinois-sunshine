@@ -21,8 +21,8 @@ def main():
 	coms = respC.json()['objects'] #List of committees
 	
 	#Open files to read committee and receipts data into
-	#com_data = open('./tmp/CommitteeData.csv', 'w')
-	#csvwriter = csvkit.py2.CSVKitWriter(com_data)
+	com_data = open('./tmp/CommitteeData.csv', 'w')
+	csvwriter = csvkit.py2.CSVKitWriter(com_data)
 	
 	#Load zipcodes into a csv file
 	zip = open('./tmp/ILZip.csv', 'r')
@@ -81,13 +81,13 @@ def main():
 			
 			
 		#Write data to csv file
-		#if count == 0:
-		#	header = c.keys()
-		#	csvwriter.writerow(header)
-		#	count += 1
-		#csvwriter.writerow(c.values())
-	with open('./tmp/com_data.json', 'w') as outfile:	
-		json.dump(coms, outfile)
+		if count == 0:
+			header = c.keys()
+			csvwriter.writerow(header)
+			count += 1
+		csvwriter.writerow(c.values())
+	#with open('./tmp/com_data.json', 'w') as outfile:	
+	#	json.dump(coms, outfile)
 
 def agg_receipts(cid, yr):
 	resp_rec = requests.get(url + 'receipts/?committee_id=' + str(cid) + '&received_date__lt=' + str(yr+1)
