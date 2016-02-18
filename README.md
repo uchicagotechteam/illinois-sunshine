@@ -6,8 +6,10 @@
 
 ## Run
 
+Fork this repository. Get url of repo from your own GitHub
+
 ```
-git clone https://github.com/SKotekal/illinois-sunshine.git
+git clone [your url here]
 python dataPull.py
 ```
 
