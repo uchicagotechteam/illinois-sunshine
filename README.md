@@ -20,9 +20,7 @@ python app.py
 This will take a while as it will pull ALL of the data. app.py uses flask and your machine to host the site. You can type in 127.0.0.1:5000 or whatever pops up in the python shell to see the map. 
 
 
-Functionality can be expanded through [Leaflet plugins](http://leafletjs.com/plugins.html). Play with it!
-
-Google/StackOverflow is your friend!
+Functionality can be expanded through [Leaflet plugins](http://leafletjs.com/plugins.html). 
 
 ## Check it out
 
