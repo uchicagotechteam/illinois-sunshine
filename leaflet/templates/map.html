@@ -2,7 +2,6 @@
 	<head> 
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
 		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-		<script src = "https://cdn.rawgit.com/SKotekal/illinois-sunshine/master/tmp/com_data.json"></script>
 		<div id="map"></div>
 		<style>
 			#map { height: 770px; }
@@ -14,14 +13,19 @@
 			var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png', {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 });
-	layer.addTo(map);
+			layer.addTo(map);
 			
-			var c_data = JSON.parse(com_data);
+			
+			var c_data = {{ data|safe }} //JSON.parse({{ data|safe }});
 			for(i = 0; i < c_data.length; i++)
 			{
-				console.log(c_data[i].lat + " " + c_data[i].lon)
-				L.marker([parseInt(c_data[i].lat), parseInt(c_data[i].lon)]).addTo(map);
-			}
+				//console.log(c_data[i].lat + " " + c_data[i].lon)
+				//if(isNaN(c_data[i].lat) == false && isNaN(c_data[i].lon) == false)
+				//{
+					L.marker([parseFloat(c_data[i].lat), parseFloat(c_data[i].lon)]).addTo(map);
+				//}
+				console.log(i);
+			};
 	
 		</script>
 	</body>
