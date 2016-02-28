@@ -15,17 +15,40 @@
 });
 			layer.addTo(map);
 			
-			
-			var c_data = {{ data|safe }} //JSON.parse({{ data|safe }});
-			for(i = 0; i < c_data.length; i++)
+			/*var pointIcon = L.icon({
+				iconUrl : '../icons/circle-stroked-18.png'
+			})*/
+			//var myIcon = L.divIcon({className: 'my-div-icon'});
+			var c_data = {{ geodata|safe }} //JSON.parse({{ data|safe }});
+			L.geoJson(c_data,{
+				style: function(feature) {
+					var fillColor = '#ffffb2';
+					var count = feature.properties.receiptCounter2015;
+						if (count >= 300) fillColor = "#bd0026";
+						else if (count >= 100) fillColor = "#fd8d3c";
+						else if (count >= 50) fillColor = '#fed976';
+						else fillColor = '#ffffb2';
+						return {
+							color: '#999',
+							weight: 1,
+							fillColor: fillColor,
+							fillOpacity: 0.6
+							};
+						},
+						onEachFeature: function(feature, layer){
+							layer.bindPopup("<b>" + feature.properties.name + "</b><br>" + feature.properties.address1 + " " + feature.properties.city + "<br>" + feature.properties.party + "<br>Receipt Counter = " + feature.properties.receiptCounter2015)
+							}
+						}).addTo(map);
+			/*for(i = 0; i < c_data.length; i++)
 			{
 				//console.log(c_data[i].lat + " " + c_data[i].lon)
 				//if(isNaN(c_data[i].lat) == false && isNaN(c_data[i].lon) == false)
 				//{
-					L.marker([parseFloat(c_data[i].lat), parseFloat(c_data[i].lon)]).addTo(map);
+				var marker = L.marker([parseFloat(c_data[i].lat), parseFloat(c_data[i].lon)]).addTo(map);
+				marker.bindPopup("<b>" + c_data[i].name + "</b><br>" + c_data[i].address1 + " " + c_data[i].city + "<br>" + c_data[i].party)
 				//}
 				console.log(i);
-			};
+			};*/
 	
 		</script>
 	</body>
