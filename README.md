@@ -2,8 +2,29 @@
 Maps campaign finance data from [Illinois Sunshine](https://www.illinoissunshine.org/). We are looking to implement
 more features such as filters, time sliders, etc.
 
+##Leaflet & More Customization
+
+[Leaflet](http://leafletjs.com/)
+
+CartoDB has some limitations as it does not allow us to customize as much as we want. We will implement solutions in javascript and leaflet, which does all of the hard mapping work. We just have to do a little more of the lifting then when using CartoDB. For instance, now we can give leaflet the exact type of base map layer we want, the type of markers we want, the time slider, the heat visualization etc etc etc without being restricted to CSV files and other CartoDB requirements. 
+
+I have gotten the committees to be mapped at this point. Thanks to CartoDB for their [free base map layer](https://cartodb.com/basemaps). 
+
+To see this visualization:
+
+```
+cd .\leaflet\
+python app.py
+```
+
+This will take a while as it will pull ALL of the data. app.py uses flask and your machine to host the site. You can type in 127.0.0.1:5000 or whatever pops up in the python shell to see the map. 
+
+
+Functionality can be expanded through [Leaflet plugins](http://leafletjs.com/plugins.html). 
+
 ## Check it out
 
+This map currently has the aggregate receipt amount and volume of receipts per year mapped for each committee. You can choose the year via the menu to the right. 
 [CartoDB Map](https://skotekal.cartodb.com/viz/1c4aa0a4-d524-11e5-b8d9-0ea31932ec1d/map)
 
 ## Run
