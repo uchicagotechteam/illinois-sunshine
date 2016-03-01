@@ -48,24 +48,19 @@ def main():
 			c['lat'] = 0
 			c['lon'] = 0
 		
-		#Aggregate receipts for all years for cth committee
-		#NEED TO CHANGE 2015 TO 1994
-		#Instead of calling by year, simply get all receipts for each committee
-		#and sort that way
-		# for yr in range(2014, 2016):
-			# create_date = c['creation_date']
-			# cyr = datetime.datetime.strptime(create_date, '%Y-%m-%dT%H:%M:%S').year
-			# if yr >= cyr:
-				# receipt_dict = agg_receipts(c['id'], yr)
-				# c[str(yr) + '_receipt_volume'] = receipt_dict['receipt_volume']
-				# c[str(yr) + '_receipt_counter'] = receipt_dict['receipt_counter']
-			# else:
-				# c[str(yr) + '_receipt_volume'] = 0
-				# c[str(yr) + '_receipt_counter'] = 0
+		c['recVolume'] = []
+		c['recCounter'] = []
+		c['expVolume'] = []
+		c['expCounter'] = []
 		
 		for yr in range(1994, 2017):
 			c['receiptVolume' + str(yr)] = 0
 			c['receiptCounter' + str(yr)] = 0
+			c['recVolume'].append(0)
+			c['recCounter'].append(0)
+			c['expVolume'].append(0)
+			c['expCounter'].append(0)
+			
 			
 		resp_rec = requests.get(url + 'receipts/?committee_id=' + str(c['id']))
 		
@@ -77,6 +72,8 @@ def main():
 				amt = r['amount']
 				c['receiptVolume' + str(received_yr)] += amt
 				c['receiptCounter' + str(received_yr)] += 1
+				c['recVolume'][received_yr-1994] += amt
+				c['recCounter'][received_yr-1994] += 1
 			
 			
 		#Write data to csv file
@@ -94,28 +91,5 @@ def main():
 	with open('./tmp/geojson_com_data.json', 'w') as outfile:
 		outfile.write(json.dumps(geojson))
 
-# def agg_receipts(cid, yr):
-	# resp_rec = requests.get(url + 'receipts/?committee_id=' + str(cid) + '&received_date__lt=' + str(yr+1)
-			# + '-01-01T00:00:00&received_date__ge=' + str(yr) + '-01-01T00:00:00') #Get receipts for the cid committee within the year yr
-	
-	# #Store volume and counter within dict
-	# dict = {}
-	# if(resp_rec.json()['meta']['total_rows'] == 0):
-		# dict['receipt_volume'] = 0
-		# dict['receipt_counter'] = 0
-		# return dict
-	
-	# com_rec = resp_rec.json()['objects'][0]['receipts'] #0 gives us the committee {only object in objects list}
-	
-	# #Loop through receipts to calculate volume and counter
-	# receipt_volume = 0
-	# receipt_counter = 0
-	# for i in range(0, len(com_rec)):
-		# receipt_volume += (com_rec[i]['amount'])
-		# receipt_counter += 1
-	# dict['receipt_volume'] = receipt_volume
-	# dict['receipt_counter'] = receipt_counter
-	# return dict
-	
 if __name__ == '__main__':
 	main()

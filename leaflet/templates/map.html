@@ -14,42 +14,75 @@
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 });
 			layer.addTo(map);
-			
-			/*var pointIcon = L.icon({
-				iconUrl : '../icons/circle-stroked-18.png'
-			})*/
-			//var myIcon = L.divIcon({className: 'my-div-icon'});
+		
 			var c_data = {{ geodata|safe }} //JSON.parse({{ data|safe }});
+			
+			//Time sensitive data
+			var rCounter = [];
+			var rVolume = [];
+			var eCounter = [];
+			var eVolume = [];
+			
+			var coms = c_data.features;
+			var numC = coms.length;
+			var overlayMaps = [];
+			for(i = 1994; i <= 2016; i++)
+			{
+				var rC = []
+				for(j = 0; j < numC; j++)
+				{
+					var count = coms[j].properties.recCounter[i-1994];
+					var fillColor = '#ffffb2';
+					if (count >= 10) fillColor = "#e31a1c";
+					else if (count >= 5) fillColor = "#fd8d3c";
+					else if (count >= 1) fillColor = '#fecc5c';
+					var markerStyle = {radius: 7, color: '#000', weight: 1, fillColor: fillColor, fillOpacity: 0.8};
+					
+					rC.push(L.circleMarker([coms[j].properties.lat, coms[j].properties.lon], markerStyle).bindPopup("<b>" + coms[j].properties.name + "</b><br>" + coms[j].properties.address1 + " " + coms[j].properties.city + "<br>" + coms[j].properties.party + "<br>Receipt Counter = " + coms[j].properties.recCounter[i-1994]));
+				}
+				
+				var pointLayer = L.layerGroup(rC);
+				rCounter.push(pointLayer);
+				overlayMaps['Receipt Counter ' + i] = pointLayer;
+			}
+			
+			L.control.layers(overlayMaps).addTo(map);
+			
+			/*var legend = L.control({position : 'bottomright'});
+			legend.onAdd = function (map) {
+				
+				var div = L.DomUtil.create('div', 'info legend'),
+					grades = [0, 1, 5, 10],
+					colors = ['#ffffb2', '#fecc5c', '#fd8d3c', '#e31a1c']
+					labels = [];
+					
+				for(var i = 0; i < colors.length; i++)
+				{
+					div.innerHTML += '<i style="background:' + colors[i] + '"></i> ' +
+					 + (grades[i+1] ? '&ndash;' + grades[i+1] + '<br>' : '+');
+				}
+				
+				return div;
+			}
+			legend.addTo(map);*/
+			
+			/*
 			L.geoJson(c_data,{
-				style: function(feature) {
+				pointToLayer: function(feature) {
 					var fillColor = '#ffffb2';
 					var count = feature.properties.receiptCounter2015;
-						if (count >= 300) fillColor = "#bd0026";
-						else if (count >= 100) fillColor = "#fd8d3c";
-						else if (count >= 50) fillColor = '#fed976';
-						else fillColor = '#ffffb2';
-						return {
-							color: '#999',
-							weight: 1,
-							fillColor: fillColor,
-							fillOpacity: 0.6
-							};
-						},
-						onEachFeature: function(feature, layer){
-							layer.bindPopup("<b>" + feature.properties.name + "</b><br>" + feature.properties.address1 + " " + feature.properties.city + "<br>" + feature.properties.party + "<br>Receipt Counter = " + feature.properties.receiptCounter2015)
-							}
-						}).addTo(map);
-			/*for(i = 0; i < c_data.length; i++)
-			{
-				//console.log(c_data[i].lat + " " + c_data[i].lon)
-				//if(isNaN(c_data[i].lat) == false && isNaN(c_data[i].lon) == false)
-				//{
-				var marker = L.marker([parseFloat(c_data[i].lat), parseFloat(c_data[i].lon)]).addTo(map);
-				marker.bindPopup("<b>" + c_data[i].name + "</b><br>" + c_data[i].address1 + " " + c_data[i].city + "<br>" + c_data[i].party)
-				//}
-				console.log(i);
-			};*/
-	
+					if (count >= 100) fillColor = "#e31a1c";
+					else if (count >= 50) fillColor = "#fd8d3c";
+					else if (count >= 15) fillColor = '#fecc5c';
+					var markerStyle = {radius: 7, color: '#000', weight: 1, fillColor: fillColor, fillOpacity: 0.8};
+					return L.circleMarker([feature.properties.lat, feature.properties.lon], markerStyle);
+					},
+				onEachFeature: function(feature, layer){
+					layer.bindPopup("<b>" + feature.properties.name + "</b><br>" + feature.properties.address1 + " " + feature.properties.city + "<br>" + feature.properties.party + "<br>Receipt Counter = " + feature.properties.receiptCounter2015)
+					}
+					}).addTo(map);*/
+					
+		
 		</script>
 	</body>
 	
