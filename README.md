@@ -14,6 +14,7 @@ To see this visualization:
 
 ```
 cd .\leaflet\
+python data.py
 python app.py
 ```
 
