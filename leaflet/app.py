@@ -7,7 +7,8 @@ app = flask.Flask(__name__)
 def index():
 	data = open('./tmp/com_data.json', 'r').read()
 	geodata = open('./tmp/geojson_com_data.json', 'r').read()
-	return flask.render_template("map.html", geodata=geodata)
+	timelineURL = flask.url_for('static', filename='Leaflet.TimeDimension/src/leaflet.timedimension.js')
+	return flask.render_template("map.html", geodata=geodata, turl = timelineURL)
 	
 if __name__ == '__main__':
 	app.debug = True

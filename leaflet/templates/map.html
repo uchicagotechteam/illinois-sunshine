@@ -9,7 +9,9 @@
 	</head>
 	<body>
 		<script>
-			var map = L.map('map').setView([40.4841667, -88.9936111], 7);
+			var map = L.map('map', {timeDimension: true, timeDimensionOptions: {
+				timeInterval: "1994-01-01/2015-12-31"
+				}, timeDimensionControl: true}).setView([40.4841667, -88.9936111], 7);
 			var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png', {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 });
@@ -26,6 +28,8 @@
 			var coms = c_data.features;
 			var numC = coms.length;
 			var overlayMaps = [];
+			
+			//So far only Receipt Counter
 			for(i = 1994; i <= 2016; i++)
 			{
 				var rC = []
@@ -37,8 +41,10 @@
 					else if (count >= 5) fillColor = "#fd8d3c";
 					else if (count >= 1) fillColor = '#fecc5c';
 					var markerStyle = {radius: 7, color: '#000', weight: 1, fillColor: fillColor, fillOpacity: 0.8};
-					
-					rC.push(L.circleMarker([coms[j].properties.lat, coms[j].properties.lon], markerStyle).bindPopup("<b>" + coms[j].properties.name + "</b><br>" + coms[j].properties.address1 + " " + coms[j].properties.city + "<br>" + coms[j].properties.party + "<br>Receipt Counter = " + coms[j].properties.recCounter[i-1994]));
+					if( i >= parseInt(coms[j].properties.createYr))
+					{
+						rC.push(L.circleMarker([coms[j].properties.lat, coms[j].properties.lon], markerStyle).bindPopup("<b>" + coms[j].properties.name + "</b><br>" + coms[j].properties.address1 + " " + coms[j].properties.city + "<br>" + coms[j].properties.party + "<br>Receipt Counter = " + coms[j].properties.recCounter[i-1994]));
+					}
 				}
 				
 				var pointLayer = L.layerGroup(rC);
@@ -46,9 +52,70 @@
 				overlayMaps['Receipt Counter ' + i] = pointLayer;
 			}
 			
+			//Political Party Map
+			
+			var dem = [];
+			var rep = [];
+			var ind = [];
+			var noParty = [];
+			var par = 'O';
+			for(j = 0; j < numC; j++)
+			{
+				var fillColor = '#ffffb2';
+				if(coms[j].properties.party === 'Republican')
+				{
+					fillColor = '#e91d0e';
+					par = 'R';
+				}
+				else if(coms[j].properties.party === 'Democratic')
+				{
+					fillColor = '#232066';
+					par = 'D';
+				}
+				else if(coms[j].properties.party === 'Independent')
+				{
+					fillColor = '#488214';
+					par = 'I';
+				}
+				var markerStyle = {radius: 7, color: '#000', weight: 1, fillColor: fillColor, fillOpacity: 0.8};
+				var pMarker = L.circleMarker([coms[j].properties.lat, coms[j].properties.lon], markerStyle).bindPopup("<b>" + coms[j].properties.name + "</b><br>" + coms[j].properties.address1 + " " + coms[j].properties.city + "<br>" + coms[j].properties.party);
+				if(par == 'R')
+				{
+					rep.push(pMarker);
+				}
+				else if(par == 'D')
+				{
+					dem.push(pMarker);
+				}
+				else if(par == 'I')
+				{
+					ind.push(pMarker);
+				}
+				else
+				{
+					noParty.push(pMarker);
+				}
+			}
+			
+			overlayMaps['Democrats'] = L.layerGroup(dem);
+			overlayMaps['Republicans'] = L.layerGroup(rep);
+			overlayMaps['Independents'] = L.layerGroup(ind);
+			overlayMaps['No Party'] = L.layerGroup(noParty);
+			
 			L.control.layers(overlayMaps).addTo(map);
 			
-			var legend = L.control({position : 'bottomright'});
+			var lg = L.layerGroup().addTo(map)
+			
+			next();
+			
+			setInterval(next, 1000*2);
+			
+			function next() {
+				lg.clearLayers().addLayer(rCounter[i]);
+				if(++i >= rCounter.length) i = 0;
+			}
+			
+			/*var legend = L.control({position : 'bottomright'});
 			legend.onAdd = function (map) {
 				
 				var div = L.DomUtil.create('div', 'info legend'),
@@ -63,7 +130,7 @@
 				}
 				
 				return div;
-			}
+			}*/
 			
 			
 			/*

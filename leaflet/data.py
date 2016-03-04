@@ -17,6 +17,7 @@ def main():
 	
 	#Request Committee data into JSON 
 	respC = requests.get(url + 'committees/') #response object that holds committees
+	
 	coms = respC.json()['objects'] #List of committees
 	
 	#Open files to read committee and receipts data into
@@ -33,7 +34,9 @@ def main():
 	#Loop through committees
 	count = 0
 	for c in coms:
-	
+		createYr = datetime.datetime.strptime(c['creation_date'], '%Y-%m-%dT%H:%M:%S').year
+		c['createYr'] = createYr
+		print(c['createYr'])
 		#Find the lat/long for cth committee's zipcode
 		found = False
 		for z in zipList:
@@ -63,6 +66,7 @@ def main():
 			
 			
 		resp_rec = requests.get(url + 'receipts/?committee_id=' + str(c['id']))
+		resp_exp = requests.get(url + 'expenditures/?committee_id=' + str(c['id']))
 		
 		if resp_rec.json()['meta']['total_rows'] != 0:
 			receipts = resp_rec.json()['objects'][0]['receipts']
@@ -74,7 +78,14 @@ def main():
 				c['receiptCounter' + str(received_yr)] += 1
 				c['recVolume'][received_yr-1994] += amt
 				c['recCounter'][received_yr-1994] += 1
-			
+		
+		if resp_exp.json()['meta']['total_rows'] != 0:
+			expenditures = resp_exp.json()['objects'][0]['expenditures']
+			for e in expenditures:
+				expended_yr = datetime.datetime.strptime(e['expended_date'], '%Y-%m-%dT%H:%M:%S').year
+				amt = r['amount']
+				c['expVolume'][expended_yr-1994] += amt
+				c['expCounter'][expended_yr-1994] += 1
 			
 		#Write data to csv file
 		#if count == 0:
