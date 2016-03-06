@@ -2,6 +2,15 @@
 	<head> 
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
 		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+		<script src='{{ turl }}/leaflet.timedimension.js'></script>
+		<script src='{{ turl }}/leaflet.timedimension.control.js'></script>
+		<script src='{{ durl }}/iso8601.js'></script>
+		<script src='{{ durl }}/iso8601.min.js'></script>
+		<!--<script src='{{ turl }}/leaflet.timedimension.layer.geojson.js'></script>-->
+		<script src='{{ turl }}/leaflet.timedimension.layer.js'></script>
+		<script src='{{ turl }}/leaflet.timedimension.layer.wms.js'></script>
+		<script src='{{ turl }}/leaflet.timedimension.player.js'></script>
+		<script src='{{ turl }}/leaflet.timedimension.util.js'></script>
 		<div id="map"></div>
 		<style>
 			#map { height: 770px; }
@@ -9,9 +18,16 @@
 	</head>
 	<body>
 		<script>
-			var map = L.map('map', {timeDimension: true, timeDimensionOptions: {
-				timeInterval: "1994-01-01/2015-12-31"
-				}, timeDimensionControl: true}).setView([40.4841667, -88.9936111], 7);
+			var map = L.map('map', {
+				zoom: 7,
+				center: [40.4841667, -88.9936111],
+				timeDimension: true, 
+				timeDimensionOptions: {
+					timeInterval: "1994-01-01T00:00:00/2015-12-31T23:59:59",
+					period: "P1Y"
+				}, 
+				timeDimensionControl: true
+				});
 			var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png', {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 });
@@ -36,10 +52,10 @@
 				for(j = 0; j < numC; j++)
 				{
 					var count = coms[j].properties.recCounter[i-1994];
-					var fillColor = '#ffffb2';
-					if (count >= 10) fillColor = "#e31a1c";
-					else if (count >= 5) fillColor = "#fd8d3c";
-					else if (count >= 1) fillColor = '#fecc5c';
+					var fillColor = '#feebe2';
+					if (count >= 80) fillColor = "#ae017e";
+					else if (count >= 40) fillColor = "#f768a1";
+					else if (count >= 10) fillColor = '#fbb4b9';
 					var markerStyle = {radius: 7, color: '#000', weight: 1, fillColor: fillColor, fillOpacity: 0.8};
 					if( i >= parseInt(coms[j].properties.createYr))
 					{
@@ -72,14 +88,18 @@
 					fillColor = '#232066';
 					par = 'D';
 				}
-				else if(coms[j].properties.party === 'Independent')
+				else if(coms[j].properties.party === 'Independent' || coms[j].properties.party === 'Nonpartisan')
 				{
 					fillColor = '#488214';
 					par = 'I';
 				}
 				var markerStyle = {radius: 7, color: '#000', weight: 1, fillColor: fillColor, fillOpacity: 0.8};
 				var pMarker = L.circleMarker([coms[j].properties.lat, coms[j].properties.lon], markerStyle).bindPopup("<b>" + coms[j].properties.name + "</b><br>" + coms[j].properties.address1 + " " + coms[j].properties.city + "<br>" + coms[j].properties.party);
-				if(par == 'R')
+				if(!coms[j].properties.party)
+				{
+					noParty.push(pMarker);
+				}
+				else if(par == 'R')
 				{
 					rep.push(pMarker);
 				}
@@ -91,29 +111,66 @@
 				{
 					ind.push(pMarker);
 				}
-				else
-				{
-					noParty.push(pMarker);
-				}
 			}
 			
-			overlayMaps['Democrats'] = L.layerGroup(dem);
-			overlayMaps['Republicans'] = L.layerGroup(rep);
-			overlayMaps['Independents'] = L.layerGroup(ind);
-			overlayMaps['No Party'] = L.layerGroup(noParty);
+			var polmaps = [];
+			polmaps['Democrats'] = L.layerGroup(dem);
+			polmaps['Republicans'] = L.layerGroup(rep);
+			polmaps['Independents'] = L.layerGroup(ind);
+			polmaps['No Party'] = L.layerGroup(noParty);
 			
-			L.control.layers(overlayMaps).addTo(map);
 			
-			var lg = L.layerGroup().addTo(map)
+			//List of legends
+			var yearLegend = L.control({position: 'topleft'})
+				yearLegend.onAdd = function(map){
+					this._div = L.DomUtil.create('div', 'info legend');
+					//this.update();
+					return this._div;
+					};
 			
-			next();
 			
-			setInterval(next, 1000*2);
+			L.control.layers(overlayMaps, polmaps).addTo(map);
+			var layg = L.layerGroup().addTo(map);
+			yearLegend.addTo(map);
+			var k = 0;
+			var yr = 1994;
+			
+			/*yearLegend.update = function(props) {
+				this.div.innerHTML = '<font size = "5">' + (yr+k).toString() + '</font>'
+			}*/
 			
 			function next() {
-				lg.clearLayers().addLayer(rCounter[i]);
-				if(++i >= rCounter.length) i = 0;
+				layg.clearLayers().addLayer(rCounter[k]);
+				yearLegend.getContainer().innerHTML = '<font size = "5">' + (yr+k).toString() + '</font>';
+			
+				if(++k >= rCounter.length)
+				{
+					k = 0;
+				}
+	
 			}
+			next();
+			setInterval(next, 1000*3);
+			
+			
+			/*var allLayers = L.layerGroup(overlayMaps[0]);
+			for(i = 1; i < overlayMaps.length; i++)
+			{
+				allLayers.addLayer(overlayMaps[i]);
+			}
+			for(i = 0; i < polmaps.length; i++)
+			{
+				allLayers.addLayer(polmaps[i]);
+			}
+			
+			var timeLayer = L.timeDimension.layer();
+			timeLayer.addTo(map);
+			var timeControl = L.control.timeDimension(timeLayer).addTo(map);*/
+			
+			
+			
+			
+			
 			
 			/*var legend = L.control({position : 'bottomright'});
 			legend.onAdd = function (map) {
@@ -130,26 +187,7 @@
 				}
 				
 				return div;
-			}*/
-			
-			
-			/*
-			L.geoJson(c_data,{
-				pointToLayer: function(feature) {
-					var fillColor = '#ffffb2';
-					var count = feature.properties.receiptCounter2015;
-					if (count >= 100) fillColor = "#e31a1c";
-					else if (count >= 50) fillColor = "#fd8d3c";
-					else if (count >= 15) fillColor = '#fecc5c';
-					var markerStyle = {radius: 7, color: '#000', weight: 1, fillColor: fillColor, fillOpacity: 0.8};
-					return L.circleMarker([feature.properties.lat, feature.properties.lon], markerStyle);
-					},
-				onEachFeature: function(feature, layer){
-					layer.bindPopup("<b>" + feature.properties.name + "</b><br>" + feature.properties.address1 + " " + feature.properties.city + "<br>" + feature.properties.party + "<br>Receipt Counter = " + feature.properties.receiptCounter2015)
-					}
-					}).addTo(map);*/
-					
-		
+			}*/		
 		</script>
 	</body>
 	
