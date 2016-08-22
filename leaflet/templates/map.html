@@ -14,6 +14,18 @@
 		<div id="map"></div>
 		<style>
 			#map { height: 770px; }
+			.legend{
+				text-align: left;
+				line-height: 18px;
+				color: #555;
+			}
+			.legend i {
+				width: 18px;
+				height: 18px;
+				float: left;
+				margin-right: 8px;
+				opacity: 0.7;
+			}
 		</style>
 	</head>
 	<body>
@@ -67,6 +79,7 @@
 				rCounter.push(pointLayer);
 				overlayMaps['Receipt Counter ' + i] = pointLayer;
 			}
+			
 			
 			//Political Party Map
 			
@@ -128,16 +141,35 @@
 					return this._div;
 					};
 			
-			
+			//Legend
+			colors = ['#feebe2', '#fbb4b9', "#f768a1", "#ae017e"];
 			L.control.layers(overlayMaps, polmaps).addTo(map);
-			var layg = L.layerGroup().addTo(map);
+			var legend = L.control({position: 'bottomright'});
+			legend.onAdd = function (map) {
+			
+				var div = L.DomUtil.create('div', 'info legend'),
+					grades = [0, 10, 40, 80],
+					labels = [];
+					
+				//loop through our density intervals and generate a label with a colored square for each intervals
+				for(var i = 0; i < grades.length; i++)
+				{
+					div.innerHTML += '<i style="background:' + colors[i] + '"></i> ' + 
+					grades[i] + (grades[i+1] ? '&ndash;' + grades[i+1] + '<br>' : '+');
+				}
+				
+				return div;
+			};
+			legend.addTo(map);
+			
+			
+			
+			
+			/*var layg = L.layerGroup().addTo(map);
 			yearLegend.addTo(map);
 			var k = 0;
 			var yr = 1994;
 			
-			/*yearLegend.update = function(props) {
-				this.div.innerHTML = '<font size = "5">' + (yr+k).toString() + '</font>'
-			}*/
 			
 			function next() {
 				layg.clearLayers().addLayer(rCounter[k]);
@@ -151,6 +183,7 @@
 			}
 			next();
 			setInterval(next, 1000*3);
+			*/
 			
 			
 			/*var allLayers = L.layerGroup(overlayMaps[0]);
